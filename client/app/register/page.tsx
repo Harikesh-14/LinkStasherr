@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 export default function Register() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -21,7 +23,7 @@ export default function Register() {
     }));
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     // Basic validation
@@ -31,7 +33,30 @@ export default function Register() {
     }
 
     // Add your registration logic here
-    console.log(formData);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData),
+        credentials: "include"
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json()
+
+        if (errorData.message === "User not found") {
+          alert("User not found")
+        } else {
+          alert("Invalid credentials")
+        }
+      } else {
+        router.push('/login');
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
