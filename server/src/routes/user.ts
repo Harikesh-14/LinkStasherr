@@ -10,7 +10,7 @@ import authMiddleware from '../middlewares/authenticate';
 
 const router = Router();
 const salt = bcrypt.genSaltSync(10);
-const secret = process.env.SECRET_KEY as string;
+const secret = process.env.JWT_SECRET as string;
 
 router.use(cookieParser());
 
@@ -41,38 +41,40 @@ router.post('/register', async (req: Request, res: Response) => {
 });
 
 // login
-router.post('/login', async (req: Request, res: Response) => {
+router.post("/login", async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  const isExistingUser = await userModel.findOne({ email })
-
-  if (!isExistingUser) {
-    res.status(400).json({ message: 'User does not exist' });
-    return;
-  }
-
-  const isValidPassword = bcrypt.compareSync(password, isExistingUser.password);
-
-  if (!isValidPassword) {
-    res.status(400).json({ message: 'Invalid password' });
-    return;
-  }
-
-  const tokenPayload = {
-    id: isExistingUser._id,
-    firstName: isExistingUser.firstName,
-    lastName: isExistingUser.lastName,
-    email: isExistingUser.email,
-    message: 'User logged in successfully'
-  };
-
   try {
+    const isExistingUser = await userModel.findOne({ email });
+
+    if (!isExistingUser) {
+      res.status(400).json({ message: "User not found" });
+      return;
+    }
+
+    const passOk = bcrypt.compareSync(password, isExistingUser.password);
+
+    if (!passOk) {
+      res.status(400).json({ message: "Invalid credentials" });
+      return;
+    }
+
+    const tokenPayload = {
+      id: isExistingUser._id,
+      firstName: isExistingUser.firstName,
+      lastName: isExistingUser.lastName,
+      email: isExistingUser.email,
+      message: "User logged in successfully",
+    };
+
     const token = jwt.sign(tokenPayload, secret, {});
-    res.cookie('token', token, { httpOnly: true, secure: true }).json(tokenPayload);
-  } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+    res.cookie("token", token, { httpOnly: true, secure: true }).json(tokenPayload);
+  } catch (err) {
+    console.error('Internal server error:', err);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
+
 
 // get user profile
 router.get('/profile', authMiddleware, async (req: Request & { user?: any }, res: Response) => {

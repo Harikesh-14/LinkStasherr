@@ -2,35 +2,67 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    remember: false
+    remember: false,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
-  }
+  };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Add your login logic here
-    console.log(formData);
-  }
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+        credentials: "include",
+      });
+
+      const contentType = response.headers.get("content-type");
+      if (!response.ok) {
+        if (contentType && contentType.includes("application/json")) {
+          const errorData = await response.json();
+          if (errorData.message === "User not found") {
+            alert("User does not exist");
+          } else if (errorData.message === "Invalid credentials") {
+            alert("Invalid password");
+          } else {
+            alert("An error occurred");
+          }
+        } else {
+          const errorText = await response.text();
+          alert(`Unexpected error: ${errorText}`);
+        }
+      } else {
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Client-side error:", error);
+      alert("An error occurred. Please try again later.");
+    }
+  };
 
   return (
-    <div
-      className="w-[25rem] md:w-[30rem] mx-auto flex flex-col items-center justify-center mt-32 mb-10 space-y-5 dark:text-white border border-gray-200 dark:border-gray-700 p-5 rounded-lg"
-    >
+    <div className="w-[25rem] md:w-[30rem] mx-auto flex flex-col items-center justify-center mt-32 mb-10 space-y-5 dark:text-white border border-gray-200 dark:border-gray-700 p-5 rounded-lg">
       <div className="w-full">
         <div className="relative w-14 h-14 mx-auto overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
-          <svg className="absolute w-16 h-16 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path></svg>
+          <svg className="absolute w-16 h-16 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
+          </svg>
         </div>
       </div>
       <h1 className="text-3xl font-bold">Sign In</h1>
@@ -87,5 +119,5 @@ export default function Login() {
         </div>
       </form>
     </div>
-  )
+  );
 }
