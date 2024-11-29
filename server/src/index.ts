@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 import linkRouter from './routes/link';
+import userRouter from './routes/user';
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ mongoose.connect(process.env.MONGO_URI as string).then(() => {
 });
 
 app.use('/link', linkRouter);
+app.use('/user', userRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');
