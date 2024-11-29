@@ -72,7 +72,7 @@ function Navbar() {
           <div className='flex gap-5 items-center justify-center'>
             <ModeToggle />
             {isUserLoggedIn ? (
-              <div className='relative h-full'>
+              <div className='relative h-full hidden md:block'>
                 <button id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName" className="flex justify-center items-center gap-2 text-sm pe-1 font-medium text-gray-900 rounded-full hover:text-blue-600 dark:hover:text-blue-500 md:me-0 dark:text-white" type="button" onClick={handleAccountMenu}>
                   <span className="sr-only">Open user menu</span>
                   <div className="relative w-8 h-8 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
@@ -138,14 +138,48 @@ function Navbar() {
 
               <div className='flex flex-col gap-5 justify-center items-center mt-5'>
                 <SheetDescription>Account</SheetDescription>
-                <Link href="/login" className="w-[110px] flex items-center justify-center gap-1 py-2 px-3 rounded bg-[#6D28D9] text-white hover:bg-[#4C1D95] duration-300 ease-in-out">
-                  <LogIn size={20} />
-                  Sign In
-                </Link>
-                <Link href="/register" className="w-[110px] flex items-center justify-center gap-1 py-2 px-3 rounded bg-[#6D28D9] text-white hover:bg-[#4C1D95] duration-300 ease-in-out">
-                  <Plus size={20} />
-                  Sign Up
-                </Link>
+                {isUserLoggedIn ? (
+                  <div className='relative h-full'>
+                  <button id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName" className="flex justify-center items-center gap-2 text-sm pe-1 font-medium text-gray-900 rounded-full hover:text-blue-600 dark:hover:text-blue-500 md:me-0 dark:text-white" type="button" onClick={handleAccountMenu}>
+                    <span className="sr-only">Open user menu</span>
+                    <div className="relative w-8 h-8 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+                      <svg className="absolute w-10 h-10 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path></svg>
+                    </div>
+                    {user?.firstName}
+                    <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+                    </svg>
+                  </button>
+  
+                  <div id="dropdownAvatarName" className={`absolute top-12 left-0 z-10 ${accountMenu ? "block" : "hidden"} bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600`}>
+                    <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                      <div className="truncate">{user?.email}</div>
+                    </div>
+                    <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownAvatarNameButton">
+                      <li>
+                        <Link href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</Link>
+                      </li>
+                      <li>
+                        <Link href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</Link>
+                      </li>
+                    </ul>
+                    <div className="py-2">
+                      <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</button>
+                    </div>
+                  </div>
+                </div>
+                ) : (
+                  <div className="flex flex-col gap-5 items-center justify-center">
+                    <Link href="/login" className="w-[110px] flex items-center justify-center gap-1 py-2 px-3 rounded bg-[#6D28D9] text-white hover:bg-[#4C1D95] duration-300 ease-in-out">
+                      <LogIn size={20} />
+                      Sign In
+                    </Link>
+                    <Link href="/register" className="w-[110px] flex items-center justify-center gap-1 py-2 px-3 rounded bg-[#6D28D9] text-white hover:bg-[#4C1D95] duration-300 ease-in-out">
+                      <Plus size={20} />
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
               </div>
             </SheetContent>
           </Sheet>
