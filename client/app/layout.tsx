@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Footer from "@/components/footer";
+import UserContextProvider from "@/context/user-context";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -36,9 +37,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          {children}
-          <Footer />
+          <UserContextProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </UserContextProvider>
         </ThemeProvider>
       </body>
     </html>

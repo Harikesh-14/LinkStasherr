@@ -78,18 +78,14 @@ router.post("/login", async (req: Request, res: Response) => {
 
 // get user profile
 router.get('/profile', authMiddleware, async (req: Request & { user?: any }, res: Response) => {
-  try {
-    const user = await userModel.findOne({ _id: req.user ? req.user.id : null });
+  const { token } = req.cookies;
 
-    if (!user) {
-      res.status(404).json({ message: 'User not found' });
-      return;
-    }
-
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+  if (!token) {
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
   }
+
+  res.json(req.user);
 });
 
 // logout
