@@ -26,8 +26,8 @@ function Navbar() {
         <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
           <div className='flex gap-5 items-center justify-center'>
             <ModeToggle />
-            <Link href="/login" className="hidden md:block py-2 px-3 rounded bg-[#6D28D9] text-white hover:bg-[#4C1D95] duration-300 ease-in-out">Login</Link>
-            <Link href="/register" className="hidden md:block py-2 px-3 rounded bg-[#6D28D9] text-white hover:bg-[#4C1D95] duration-300 ease-in-out">Register</Link>
+            <Link href="/login" className="hidden md:block py-2 px-3 rounded bg-[#6D28D9] text-white hover:bg-[#4C1D95] duration-300 ease-in-out">Sign In</Link>
+            <Link href="/register" className="hidden md:block py-2 px-3 rounded bg-[#6D28D9] text-white hover:bg-[#4C1D95] duration-300 ease-in-out">Sign Up</Link>
           </div>
 
           <Sheet>
