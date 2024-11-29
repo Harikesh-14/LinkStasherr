@@ -26,7 +26,7 @@ export default function Login() {
 
   return (
     <div
-      className="w-[30rem] mx-auto flex flex-col items-center justify-center mt-32 mb-10 space-y-5 dark:text-white border border-gray-200 dark:border-gray-700 p-5 rounded-lg"
+      className="w-[25rem] md:w-[30rem] mx-auto flex flex-col items-center justify-center mt-32 mb-10 space-y-5 dark:text-white border border-gray-200 dark:border-gray-700 p-5 rounded-lg"
     >
       <div className="w-full">
         <div className="relative w-14 h-14 mx-auto overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
