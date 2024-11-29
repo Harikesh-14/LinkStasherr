@@ -3,8 +3,10 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
+  const { toast } = useToast();
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
@@ -37,15 +39,31 @@ export default function Login() {
         if (contentType && contentType.includes("application/json")) {
           const errorData = await response.json();
           if (errorData.message === "User not found") {
-            alert("User does not exist");
+            return toast({
+              variant: "destructive",
+              title: "Error",
+              description: errorData.message,
+            });
           } else if (errorData.message === "Invalid credentials") {
-            alert("Invalid password");
+            return toast({
+              variant: "destructive",
+              title: "Error",
+              description: errorData.message,
+            });
           } else {
-            alert("An error occurred");
+            return toast({
+              variant: "destructive",
+              title: "Error",
+              description: "An unexpected error occurred",
+            });
           }
         } else {
           const errorText = await response.text();
-          alert(`Unexpected error: ${errorText}`);
+          return toast({
+            variant: "destructive",
+            title: "Error",
+            description: errorText,
+          });
         }
       } else {
         router.push("/");

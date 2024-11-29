@@ -2,8 +2,10 @@
 
 import { Scissors, Copy } from 'lucide-react';
 import React, { useState } from 'react';
+import { useToast } from "@/hooks/use-toast";
 
 export default function LinkInput() {
+  const { toast } = useToast();
   const [link, setLink] = useState('');
   const [shortenedLink, setShortenedLink] = useState('');
 
@@ -23,6 +25,11 @@ export default function LinkInput() {
 
       if (response.ok) {
         setLink('');
+        toast({
+          variant: 'default',
+          title: 'Success',
+          description: 'Link shortened successfully',
+        });
       } else {
         console.error('Failed to shorten the link');
       }

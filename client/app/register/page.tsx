@@ -1,10 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Register() {
+  const { toast } = useToast();
   const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -28,8 +30,11 @@ export default function Register() {
     
     // Basic validation
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
-      return;
+      return toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Passwords do not match",
+      });
     }
 
     // Add your registration logic here
@@ -47,9 +52,17 @@ export default function Register() {
         const errorData = await response.json()
 
         if (errorData.message === "User not found") {
-          alert("User not found")
+          return toast({
+            variant: "destructive",
+            title: "Error",
+            description: errorData.message,
+          });
         } else {
-          alert("Invalid credentials")
+          return toast({
+            variant: "destructive",
+            title: "Error",
+            description: errorData.message,
+          });
         }
       } else {
         router.push('/login');
