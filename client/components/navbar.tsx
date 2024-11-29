@@ -38,6 +38,27 @@ function Navbar() {
     })
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        setUser({
+          id: "",
+          firstName: "",
+          lastName: "",
+          email: "",
+        });
+        setIsUserLoggedIn(false);
+      }
+    } catch (error) {
+      console.error('Client-side error:', error);
+    }
+  };
+
   return (
     <nav className="fixed w-full z-20 top-0 start-0 bg-opacity-70 backdrop-blur-lg bg-white dark:bg-[#030712] dark:bg-opacity-70 transition-all duration-300 ease-in-out shadow-sm dark:shadow-lg border-b border-gray-200 dark:border-gray-800">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -76,7 +97,7 @@ function Navbar() {
                     </li>
                   </ul>
                   <div className="py-2">
-                    <Link href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</Link>
+                    <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</button>
                   </div>
                 </div>
               </div>
