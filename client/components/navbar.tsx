@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Home, PersonStanding, FileQuestion, LogIn, Plus } from 'lucide-react';
 import { ModeToggle } from './theme-changer';
@@ -17,6 +17,7 @@ import { UserContext } from '@/context/user-context';
 function Navbar() {
   const { user, setUser, isUserLoggedIn, setIsUserLoggedIn } = useContext(UserContext)!;
   const [accountMenu, setAccountMenu] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleAccountMenu = () => {
     setAccountMenu(!accountMenu);
@@ -36,6 +37,23 @@ function Navbar() {
         }
       })
     })
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setAccountMenu(false);
+      }
+    };
+
+    // Add event listener
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    // Clean up event listener
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -72,7 +90,7 @@ function Navbar() {
           <div className='flex gap-5 items-center justify-center'>
             <ModeToggle />
             {isUserLoggedIn ? (
-              <div className='relative h-full hidden md:block'>
+              <div ref={dropdownRef} className='relative h-full hidden md:block'>
                 <button id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName" className="flex justify-center items-center gap-2 text-sm pe-1 font-medium text-gray-900 rounded-full hover:text-blue-600 dark:hover:text-blue-500 md:me-0 dark:text-white" type="button" onClick={handleAccountMenu}>
                   <span className="sr-only">Open user menu</span>
                   <div className="relative w-8 h-8 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
@@ -93,7 +111,7 @@ function Navbar() {
                       <Link href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</Link>
                     </li>
                     <li>
-                      <Link href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</Link>
+                      <Link href="/custom-link" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Custom Link</Link>
                     </li>
                   </ul>
                   <div className="py-2">
