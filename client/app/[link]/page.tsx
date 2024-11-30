@@ -3,12 +3,14 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { use } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function DynamicRedirect({
   params: paramsPromise,
 }: {
   params: Promise<{ link: string }>
 }) {
+  const { toast } = useToast();
   const router = useRouter();
   const params = use(paramsPromise);
 
@@ -19,22 +21,31 @@ export default function DynamicRedirect({
         const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/link/get/${params.link}`);
         
         if (!response.ok) {
-          throw new Error(`Link not found: ${response.status}`);
+          return toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Failed to fetch the original link',
+          });
         }
         
         const data = await response.json();
-        console.log('API response data:', data);
         
         // Redirect to the original link
         if (data.url) {
           window.location.href = data.url;
         } else {
-          throw new Error('Original URL not found in the response');
+          return toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Failed to fetch the original link',
+          });
         }
       } catch (error) {
-        console.error('Redirection failed:', error);
-        // Optionally handle error (e.g., show error page)
-        router.push('/error');
+        return toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Failed to redirect to the original link',
+        }); 
       }
     }
 
