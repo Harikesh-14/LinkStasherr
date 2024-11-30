@@ -78,7 +78,7 @@ export default function LinkInput() {
           <p className="text-2xl font-medium">
             Your shortened link is:
           </p>
-          <div className='w-1/2 flex gap-2 justify-center items-center'>
+          <div className='w-2/3 flex gap-2 justify-center items-center'>
             <input
               type="text"
               id="disabled-input-2"
@@ -88,7 +88,7 @@ export default function LinkInput() {
               readOnly
             />
             <button
-              className='flex gap-2 items-center justify-center mt-4 md:mt-0 bg-[#6D28D9] text-white rounded-lg p-2 focus:outline-none transition duration-200 hover:bg-[#7C3AED] dark:bg-[#7C3AED] dark:hover:bg-[#8B5CF6]'
+              className='flex gap-2 items-center justify-center md:mt-0 bg-[#6D28D9] text-white rounded-lg p-2 focus:outline-none transition duration-200 hover:bg-[#7C3AED] dark:bg-[#7C3AED] dark:hover:bg-[#8B5CF6]'
               onClick={handleCopyToClipboard}
             >
               <Copy size={20} className="inline-block" />
