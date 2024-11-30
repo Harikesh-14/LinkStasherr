@@ -10,19 +10,6 @@ const linkSchema = new Schema({
     type: String,
     required: true
   },
-  clicks: {
-    type: Number,
-    default: 0
-  },
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'user',
-    default: null,
-  },
-  isGuest: {
-    type: Boolean,
-    default: true
-  }
 }, {
   timestamps: true
 });
