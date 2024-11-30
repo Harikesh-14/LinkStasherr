@@ -1,13 +1,45 @@
 "use client";
 
 import { useToast } from '@/hooks/use-toast';
-import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 const CustomLink = () => {
   const [originalUrl, setOriginalUrl] = useState('');
   const [customUrl, setCustomUrl] = useState('');
   const [generatedLink, setGeneratedLink] = useState('');
   const { toast } = useToast();
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/check-login`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        const data = await response.json();
+
+        if (!data.authenticated) {
+          toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: data.message || 'Please login to continue',
+          });
+          router.push('/login');
+        }
+      } catch (error) {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Failed to check user authentication',
+        });
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   const handleGenerateLink = async () => {
     // Validation
@@ -61,7 +93,7 @@ const CustomLink = () => {
   const handleCopyLink = () => {
     if (generatedLink) {
       navigator.clipboard.writeText(generatedLink);
-      
+
       toast({
         variant: 'default',
         title: 'Copied',

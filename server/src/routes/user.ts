@@ -88,6 +88,32 @@ router.get('/profile', authMiddleware, async (req: Request & { user?: any }, res
   res.json(req.user);
 });
 
+// to check if the user is logged in
+router.get('/check-login', async (req: Request, res: Response) => {
+  const { token } = req.cookies;
+
+  if (!token) {
+    res.status(401).json({ 
+      authenticated: false, 
+      message: 'Unauthorized' 
+    });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, secret);
+    res.json({ 
+      authenticated: true, 
+      user: decoded 
+    });
+  } catch (error) {
+    res.status(401).json({ 
+      authenticated: false, 
+      message: 'Invalid or expired token' 
+    });
+  }
+});
+
 // logout
 router.post('/logout', async (req: Request, res: Response) => {
   res.clearCookie('token').json({ message: 'User logged out successfully' });

@@ -71,6 +71,8 @@ function Navbar() {
           email: "",
         });
         setIsUserLoggedIn(false);
+        // reload the page
+        window.location.reload();
       }
     } catch (error) {
       console.error('Client-side error:', error);
