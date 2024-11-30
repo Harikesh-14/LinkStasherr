@@ -38,6 +38,15 @@ export default function LinkInput() {
     }
   };
 
+  const handleCopyToClipboard = () => {
+    navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_CLIENT_URL}/${shortenedLink}`);
+    toast({
+      variant: 'default',
+      title: 'Copied',
+      description: 'Link copied to clipboard',
+    });
+  }
+
   return (
     <section className="w-full md:w-[35rem] mx-auto p-6">
       <div className="text-center">
@@ -75,10 +84,13 @@ export default function LinkInput() {
               id="disabled-input-2"
               aria-label="disabled input"
               className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              value={`${process.env.NEXT_PUBLIC_SERVER_URL}/${shortenedLink}`}
+              value={`${process.env.NEXT_PUBLIC_CLIENT_URL}/${shortenedLink}`}
               readOnly
             />
-            <button className='flex gap-2 items-center justify-center mt-4 md:mt-0 bg-[#6D28D9] text-white rounded-lg p-2 focus:outline-none transition duration-200 hover:bg-[#7C3AED] dark:bg-[#7C3AED] dark:hover:bg-[#8B5CF6]'>
+            <button
+              className='flex gap-2 items-center justify-center mt-4 md:mt-0 bg-[#6D28D9] text-white rounded-lg p-2 focus:outline-none transition duration-200 hover:bg-[#7C3AED] dark:bg-[#7C3AED] dark:hover:bg-[#8B5CF6]'
+              onClick={handleCopyToClipboard}
+            >
               <Copy size={20} className="inline-block" />
             </button>
           </div>
