@@ -2,12 +2,10 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
   const { toast } = useToast();
-  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -66,7 +64,8 @@ export default function Login() {
           });
         }
       } else {
-        router.push("/");
+        // router.push("/");
+        window.location.href = "/";
       }
     } catch (error) {
       console.error("Client-side error:", error);
