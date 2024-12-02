@@ -1,11 +1,145 @@
 "use client";
 
-import React, { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
+import React, { useEffect, useState } from 'react';
 
 export default function Dashboard() {
-  const [firstName, setFirstName] = useState('John');
-  const [lastName, setLastName] = useState('Doe');
-  const [email, setEmail] = useState('johndoe@example.com');
+  const { toast } = useToast();
+  
+  // State for form values - moved AFTER user state
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/profile`, {
+      method: 'GET',
+      credentials: 'include',
+    }).then(response => {
+      response.json().then(data => {
+        if (response.ok) {
+          // Update form states when user data is fetched
+          setFirstName(data.firstName);
+          setLastName(data.lastName);
+          setEmail(data.email);
+        } else {
+          console.error(data.message);
+        }
+      })
+    });
+  }, []);
+
+  // State for edit modes
+  const [isFirstNameEditing, setIsFirstNameEditing] = useState(false);
+  const [isLastNameEditing, setIsLastNameEditing] = useState(false);
+  const [isEmailEditing, setIsEmailEditing] = useState(false);
+
+  // Handler for starting edit mode
+  const handleStartEditing = (field: string) => {
+    switch (field) {
+      case 'firstName':
+        setIsFirstNameEditing(true);
+        break;
+      case 'lastName':
+        setIsLastNameEditing(true);
+        break;
+      case 'email':
+        setIsEmailEditing(true);
+        break;
+    }
+  };
+
+  // Update First Name
+  const handleUpdateFirstName = () => {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/update/firstName`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ firstName }),
+    }).then(response => {
+      response.json().then(data => {
+        if (response.ok) {
+          toast({
+            variant: 'default',
+            title: 'First Name Updated',
+            description: 'Your first name has been updated successfully',
+          })
+        } else {
+          console.error(data.message);
+        }
+      });
+    });
+  }
+
+  // Update Last Name
+  const handleUpdateLastName = () => {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/update/lastName`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ firstName }),
+    }).then(response => {
+      response.json().then(data => {
+        if (response.ok) {
+          toast({
+            variant: 'default',
+            title: 'First Name Updated',
+            description: 'Your last name has been updated successfully',
+          })
+        } else {
+          console.error(data.message);
+        }
+      });
+    });
+  }
+
+  // Update email
+  const handleUpdateEmail = () => {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/update/email`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ firstName }),
+    }).then(response => {
+      response.json().then(data => {
+        if (response.ok) {
+          toast({
+            variant: 'default',
+            title: 'First Name Updated',
+            description: 'Your email has been updated successfully',
+          })
+        } else {
+          console.error(data.message);
+        }
+      });
+    });
+  }
+
+  // Handler for confirming edit
+  const handleConfirmEdit = (field: string) => {
+    switch (field) {
+      case 'firstName':
+        setIsFirstNameEditing(false);
+        // TODO: Add API call to update first name
+        handleUpdateFirstName();
+
+        break;
+      case 'lastName':
+        setIsLastNameEditing(false);
+        // TODO: Add API call to update last name
+        break;
+      case 'email':
+        setIsEmailEditing(false);
+        // TODO: Add API call to update email
+        break;
+    }
+  };
 
   return (
     <div className="min-h-screen py-20 px-4 sm:px-6 lg:px-8">
@@ -13,7 +147,7 @@ export default function Dashboard() {
         {/* Profile Information Section */}
         <div className="p-6 border-b border-gray-200">
           <h1 className="text-2xl font-bold mb-6">Profile Information</h1>
-          
+
           <div className="space-y-4">
             {/* First Name */}
             <div className="flex items-center space-x-4">
@@ -25,15 +159,29 @@ export default function Dashboard() {
                   type="text"
                   id="firstName"
                   value={firstName}
-                  readOnly
-                  className="w-full rounded-lg border border-[#6D28D9] focus:outline-none focus:border-[#7C3AED] transition duration-200 px-3 py-2 dark:bg-[#111827] dark:border-gray-700 dark:text-gray-100 dark:focus:border-[#7C3AED] cursor-not-allowed"
+                  onChange={(e) => setFirstName(e.target.value)}
+                  readOnly={!isFirstNameEditing}
+                  className={`w-full rounded-lg border border-[#6D28D9] focus:outline-none focus:border-[#7C3AED] transition duration-200 px-3 py-2 dark:bg-[#111827] dark:border-gray-700 dark:text-gray-100 dark:focus:border-[#7C3AED] 
+                    ${!isFirstNameEditing ? 'cursor-not-allowed' : ''}`}
                 />
               </div>
-              <button
-                className="mt-6 px-4 py-2 bg-[#6D28D9] text-white rounded-lg focus:outline-none transition duration-200 hover:bg-[#7C3AED] dark:bg-[#7C3AED] dark:hover:bg-[#8B5CF6]"
-              >
-                Update
-              </button>
+              <div>
+                {!isFirstNameEditing ? (
+                  <button
+                    onClick={() => handleStartEditing('firstName')}
+                    className="mt-6 px-4 py-2 bg-[#6D28D9] text-white rounded-lg focus:outline-none transition duration-200 hover:bg-[#7C3AED] dark:bg-[#7C3AED] dark:hover:bg-[#8B5CF6]"
+                  >
+                    Update
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleConfirmEdit('firstName')}
+                    className="mt-6 px-4 py-2 bg-green-600 text-white rounded-lg focus:outline-none transition duration-200 hover:bg-green-700"
+                  >
+                    Confirm
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Last Name */}
@@ -46,15 +194,29 @@ export default function Dashboard() {
                   type="text"
                   id="lastName"
                   value={lastName}
-                  readOnly
-                  className="w-full rounded-lg border border-[#6D28D9] focus:outline-none focus:border-[#7C3AED] transition duration-200 px-3 py-2 dark:bg-[#111827] dark:border-gray-700 dark:text-gray-100 dark:focus:border-[#7C3AED] cursor-not-allowed"
+                  onChange={(e) => setLastName(e.target.value)}
+                  readOnly={!isLastNameEditing}
+                  className={`w-full rounded-lg border border-[#6D28D9] focus:outline-none focus:border-[#7C3AED] transition duration-200 px-3 py-2 dark:bg-[#111827] dark:border-gray-700 dark:text-gray-100 dark:focus:border-[#7C3AED] 
+                    ${!isLastNameEditing ? 'cursor-not-allowed' : ''}`}
                 />
               </div>
-              <button
-                className="mt-6 px-4 py-2 bg-[#6D28D9] text-white rounded-lg focus:outline-none transition duration-200 hover:bg-[#7C3AED] dark:bg-[#7C3AED] dark:hover:bg-[#8B5CF6]"
-              >
-                Update
-              </button>
+              <div>
+                {!isLastNameEditing ? (
+                  <button
+                    onClick={() => handleStartEditing('lastName')}
+                    className="mt-6 px-4 py-2 bg-[#6D28D9] text-white rounded-lg focus:outline-none transition duration-200 hover:bg-[#7C3AED] dark:bg-[#7C3AED] dark:hover:bg-[#8B5CF6]"
+                  >
+                    Update
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleConfirmEdit('lastName')}
+                    className="mt-6 px-4 py-2 bg-green-600 text-white rounded-lg focus:outline-none transition duration-200 hover:bg-green-700"
+                  >
+                    Confirm
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Email */}
@@ -67,15 +229,29 @@ export default function Dashboard() {
                   type="email"
                   id="email"
                   value={email}
-                  readOnly
-                  className="w-full rounded-lg border border-[#6D28D9] focus:outline-none focus:border-[#7C3AED] transition duration-200 px-3 py-2 dark:bg-[#111827] dark:border-gray-700 dark:text-gray-100 dark:focus:border-[#7C3AED] cursor-not-allowed"
+                  onChange={(e) => setEmail(e.target.value)}
+                  readOnly={!isEmailEditing}
+                  className={`w-full rounded-lg border border-[#6D28D9] focus:outline-none focus:border-[#7C3AED] transition duration-200 px-3 py-2 dark:bg-[#111827] dark:border-gray-700 dark:text-gray-100 dark:focus:border-[#7C3AED] 
+                    ${!isEmailEditing ? 'cursor-not-allowed' : ''}`}
                 />
               </div>
-              <button
-                className="mt-6 px-4 py-2 bg-[#6D28D9] text-white rounded-lg focus:outline-none transition duration-200 hover:bg-[#7C3AED] dark:bg-[#7C3AED] dark:hover:bg-[#8B5CF6]"
-              >
-                Update
-              </button>
+              <div>
+                {!isEmailEditing ? (
+                  <button
+                    onClick={() => handleStartEditing('email')}
+                    className="mt-6 px-4 py-2 bg-[#6D28D9] text-white rounded-lg focus:outline-none transition duration-200 hover:bg-[#7C3AED] dark:bg-[#7C3AED] dark:hover:bg-[#8B5CF6]"
+                  >
+                    Update
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleConfirmEdit('email')}
+                    className="mt-6 px-4 py-2 bg-green-600 text-white rounded-lg focus:outline-none transition duration-200 hover:bg-green-700"
+                  >
+                    Confirm
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -83,7 +259,7 @@ export default function Dashboard() {
         {/* Change Password Section */}
         <div className="p-6">
           <h2 className="text-2xl font-bold mb-6 mt-5">Change Password</h2>
-          
+
           <div className="space-y-4">
             {/* Current Password */}
             <div>

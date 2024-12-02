@@ -11,7 +11,7 @@ type UserType = {
 }
 
 type UserContextType = {
-  user: UserType | null;
+  user: UserType;
   setUser: React.Dispatch<React.SetStateAction<UserType>>;
   isUserLoggedIn: boolean;
   setIsUserLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
