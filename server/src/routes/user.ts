@@ -217,6 +217,49 @@ router.put('/update/email', async (req: Request, res: Response) => {
   })
 });
 
+// update password
+router.put('/update/password', async (req: Request, res: Response) => {
+  const { currentPassword, newPassword } = req.body;
+  const { token } = req.cookies;
+
+  if (!token) {
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
+  }
+
+  jwt.verify(token, secret, {}, async (err, decoded) => {
+    if (err) {
+      console.error('JWT verification error:', err);
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    try {
+      const info = decoded as CustomJwtPayload;
+      const user = await userModel.findById(info.id);
+
+      if (!user) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      }
+
+      const passOk = bcrypt.compareSync(currentPassword, user.password);
+
+      if (!passOk) {
+        res.status(400).json({ message: 'Invalid credentials' });
+        return;
+      }
+
+      const hashedPassword = bcrypt.hashSync(newPassword, salt);
+      const updatedUser = await userModel.findByIdAndUpdate(info.id, { password: hashedPassword }, { new: true });
+
+      res.json(updatedUser);
+    } catch (error) {
+      console.error('Internal server error:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  })
+});
+
 // logout
 router.post('/logout', async (req: Request, res: Response) => {
   res.clearCookie('token').json({ message: 'User logged out successfully' });

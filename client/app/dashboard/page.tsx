@@ -1,15 +1,52 @@
 "use client";
 
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 export default function Dashboard() {
   const { toast } = useToast();
-  
+  const router = useRouter();
+
   // State for form values - moved AFTER user state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/check-login`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        const data = await response.json();
+
+        if (!data.authenticated) {
+          toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: data.message || 'Please login to continue',
+          });
+          router.push('/login');
+        }
+      } catch (error) {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Failed to check user authentication',
+        });
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/profile`, {
@@ -139,6 +176,47 @@ export default function Dashboard() {
     }
   };
 
+  const handleChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.currentTarget;
+    setPasswordData({
+      ...passwordData,
+      [name]: value,
+    });
+  }
+
+  const handleUpdatePassword = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      return toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'New password and confirm password do not match',
+      });
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/update/password`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(passwordData),
+    }).then(response => {
+      response.json().then(data => {
+        if (response.ok) {
+          toast({
+            variant: 'default',
+            title: 'Password Updated',
+            description: 'Your password has been updated successfully',
+          })
+        } else {
+          console.error(data.message);
+        }
+      });
+    });
+  }
+
   return (
     <div className="min-h-screen py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto overflow-hidden">
@@ -261,7 +339,10 @@ export default function Dashboard() {
         </p>
 
         {/* Change Password Section */}
-        <div className="p-6">
+        <form
+          className="p-6"
+          onSubmit={handleUpdatePassword}
+        >
           <h2 className="text-2xl font-bold mb-6 mt-5">Change Password</h2>
 
           <div className="space-y-4">
@@ -274,7 +355,10 @@ export default function Dashboard() {
                 type="password"
                 id="currentPassword"
                 placeholder="Enter current password"
-                className="w-full rounded-lg border border-[#6D28D9] focus:outline-none focus:border-[#7C3AED] transition duration-200 px-3 py-2 dark:bg-[#111827] dark:border-gray-700 dark:text-gray-100 dark:focus:border-[#7C3AED] cursor-not-allowed"
+                className="w-full rounded-lg border border-[#6D28D9] focus:outline-none focus:border-[#7C3AED] transition duration-200 px-3 py-2 dark:bg-[#111827] dark:border-gray-700 dark:text-gray-100 dark:focus:border-[#7C3AED]"
+                value={passwordData.currentPassword}
+                onChange={handleChangePassword}
+                name='currentPassword'
               />
             </div>
 
@@ -287,7 +371,10 @@ export default function Dashboard() {
                 type="password"
                 id="newPassword"
                 placeholder="Enter new password"
-                className="w-full rounded-lg border border-[#6D28D9] focus:outline-none focus:border-[#7C3AED] transition duration-200 px-3 py-2 dark:bg-[#111827] dark:border-gray-700 dark:text-gray-100 dark:focus:border-[#7C3AED] cursor-not-allowed"
+                className="w-full rounded-lg border border-[#6D28D9] focus:outline-none focus:border-[#7C3AED] transition duration-200 px-3 py-2 dark:bg-[#111827] dark:border-gray-700 dark:text-gray-100 dark:focus:border-[#7C3AED]"
+                value={passwordData.newPassword}
+                onChange={handleChangePassword}
+                name='newPassword'
               />
             </div>
 
@@ -300,20 +387,24 @@ export default function Dashboard() {
                 type="password"
                 id="confirmPassword"
                 placeholder="Confirm new password"
-                className="w-full rounded-lg border border-[#6D28D9] focus:outline-none focus:border-[#7C3AED] transition duration-200 px-3 py-2 dark:bg-[#111827] dark:border-gray-700 dark:text-gray-100 dark:focus:border-[#7C3AED] cursor-not-allowed"
+                className="w-full rounded-lg border border-[#6D28D9] focus:outline-none focus:border-[#7C3AED] transition duration-200 px-3 py-2 dark:bg-[#111827] dark:border-gray-700 dark:text-gray-100 dark:focus:border-[#7C3AED]"
+                value={passwordData.confirmPassword}
+                onChange={handleChangePassword}
+                name='confirmPassword'
               />
             </div>
 
             {/* Change Password Button */}
             <div className="pt-4">
               <button
+                type='submit'
                 className="w-full bg-[#6D28D9] text-white rounded-lg py-2 focus:outline-none transition duration-200 hover:bg-[#7C3AED] dark:bg-[#7C3AED] dark:hover:bg-[#8B5CF6]"
               >
                 Change Password
               </button>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
