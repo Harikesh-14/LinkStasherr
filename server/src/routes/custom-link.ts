@@ -66,6 +66,26 @@ router.get('/get-all/:userId', async (req: Request, res: Response) => {
   }
 });
 
+// get a original link by custom link
+router.get('/get/:customLink', async (req: Request, res: Response) => {
+  const { customLink } = req.params;
+  try {
+    const originalLink = await customLinkModel.findOne({ modifiedUrl: customLink });
+
+    if (!originalLink) {
+      res.status(404).json({ message: 'Link not found' });
+      return;
+    }
+
+    res.status(200).json(originalLink);
+
+    // Update the click count
+    await customLinkModel.findByIdAndUpdate(originalLink._id, { click: originalLink.click + 1 });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // delete a custom link by id
 router.delete('/delete/:linkId', async (req: Request, res: Response) => {
   try {
