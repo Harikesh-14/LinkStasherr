@@ -81,13 +81,13 @@ export default function Dashboard() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ firstName }),
+      body: JSON.stringify({ lastName }),
     }).then(response => {
       response.json().then(data => {
         if (response.ok) {
           toast({
             variant: 'default',
-            title: 'First Name Updated',
+            title: 'Last Name Updated',
             description: 'Your last name has been updated successfully',
           })
         } else {
@@ -105,13 +105,13 @@ export default function Dashboard() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ firstName }),
+      body: JSON.stringify({ email }),
     }).then(response => {
       response.json().then(data => {
         if (response.ok) {
           toast({
             variant: 'default',
-            title: 'First Name Updated',
+            title: 'Email Updated',
             description: 'Your email has been updated successfully',
           })
         } else {
@@ -126,17 +126,15 @@ export default function Dashboard() {
     switch (field) {
       case 'firstName':
         setIsFirstNameEditing(false);
-        // TODO: Add API call to update first name
         handleUpdateFirstName();
-
         break;
       case 'lastName':
         setIsLastNameEditing(false);
-        // TODO: Add API call to update last name
+        handleUpdateLastName();
         break;
       case 'email':
         setIsEmailEditing(false);
-        // TODO: Add API call to update email
+        handleUpdateEmail();
         break;
     }
   };
@@ -255,6 +253,12 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        <p
+          className={`text-sm text-gray-500 mt-4 dark:text-gray-400 before:content-['*'] before:text-red-600 before:font-bold before:mr-1`}
+        >
+          You might need to logout and login again to see the changes in effect.
+        </p>
 
         {/* Change Password Section */}
         <div className="p-6">

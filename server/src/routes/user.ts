@@ -100,23 +100,23 @@ router.get('/check-login', async (req: Request, res: Response) => {
   const { token } = req.cookies;
 
   if (!token) {
-    res.status(401).json({ 
-      authenticated: false, 
-      message: 'Unauthorized' 
+    res.status(401).json({
+      authenticated: false,
+      message: 'Unauthorized'
     });
     return;
   }
 
   try {
     const decoded = jwt.verify(token, secret);
-    res.json({ 
-      authenticated: true, 
-      user: decoded 
+    res.json({
+      authenticated: true,
+      user: decoded
     });
   } catch (error) {
-    res.status(401).json({ 
-      authenticated: false, 
-      message: 'Invalid or expired token' 
+    res.status(401).json({
+      authenticated: false,
+      message: 'Invalid or expired token'
     });
   }
 });
@@ -154,10 +154,68 @@ router.put('/update/firstName', async (req: Request, res: Response) => {
 });
 
 // update last name
-router.put('/update/lastName', async (req: Request, res: Response) => {});
+router.put('/update/lastName', async (req: Request, res: Response) => {
+  const { lastName } = req.body;
+  const { token } = req.cookies;
+
+  if (!token) {
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
+  }
+
+  jwt.verify(token, secret, {}, async (err, decoded) => {
+    if (err) {
+      console.error('JWT verification error:', err);
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    try {
+      const info = decoded as CustomJwtPayload;
+      const updatedUser = await userModel.findByIdAndUpdate(info.id, { lastName }, { new: true });
+
+      if (!updatedUser) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      }
+      res.json(updatedUser);
+    } catch (error) {
+      console.error('Internal server error:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  })
+});
 
 // update email
-router.put('/update/email', async (req: Request, res: Response) => {});
+router.put('/update/email', async (req: Request, res: Response) => {
+  const { email } = req.body;
+  const { token } = req.cookies;
+
+  if (!token) {
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
+  }
+
+  jwt.verify(token, secret, {}, async (err, decoded) => {
+    if (err) {
+      console.error('JWT verification error:', err);
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    try {
+      const info = decoded as CustomJwtPayload;
+      const updatedUser = await userModel.findByIdAndUpdate(info.id, { email }, { new: true });
+
+      if (!updatedUser) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      }
+      res.json(updatedUser);
+    } catch (error) {
+      console.error('Internal server error:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  })
+});
 
 // logout
 router.post('/logout', async (req: Request, res: Response) => {
