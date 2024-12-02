@@ -9,3 +9,10 @@ export type user = {
   email: string;
   password: string;
 }
+
+export type customLink = {
+  originalLink: string;
+  customLink: string;
+  click: number;
+  user: string;
+}

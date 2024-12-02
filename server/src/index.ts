@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 
 import linkRouter from './routes/link';
 import userRouter from './routes/user';
+import customLinkRouter from './routes/custom-link';
 
 dotenv.config();
 
@@ -26,8 +27,9 @@ mongoose.connect(process.env.MONGO_URI as string).then(() => {
   console.log(error);
 });
 
-app.use('/link', linkRouter);
 app.use('/user', userRouter);
+app.use('/link', linkRouter);
+app.use('/custom-link', customLinkRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');

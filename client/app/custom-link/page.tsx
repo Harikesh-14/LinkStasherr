@@ -56,11 +56,12 @@ const CustomLink = () => {
       // Validate original URL
       new URL(originalUrl);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/link/add`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/custom-link/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ url: originalUrl, modifiedUrl: customUrl }),
       });
 
