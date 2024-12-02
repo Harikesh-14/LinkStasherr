@@ -58,9 +58,28 @@ router.post('/add', async (req: Request, res: Response) => {
 router.get('/get-all/:userId', async (req: Request, res: Response) => {
   const { userId } = req.params;
   try {
-    const customLinks = await customLinkModel.find({ userId });
+    const customLinks = await customLinkModel.find({ user: userId });
 
     res.status(200).json(customLinks);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// delete a custom link by id
+router.delete('/delete/:linkId', async (req: Request, res: Response) => {
+  try {
+    const { linkId } = req.params;
+    
+    // Optionally, verify user ownership of the link
+    const deletedLink = await customLinkModel.findByIdAndDelete(linkId);
+    
+    if (!deletedLink) {
+      res.status(404).json({ message: 'Link not found' });
+      return;
+    }
+    
+    res.status(200).json({ message: 'Link deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });
   }
