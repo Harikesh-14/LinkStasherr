@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import cookieParser from "cookie-parser";
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -13,6 +13,13 @@ const salt = bcrypt.genSaltSync(10);
 const secret = process.env.JWT_SECRET as string;
 
 router.use(cookieParser());
+
+interface CustomJwtPayload extends JwtPayload {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
 
 // add a new user
 router.post('/register', async (req: Request, res: Response) => {
@@ -113,6 +120,44 @@ router.get('/check-login', async (req: Request, res: Response) => {
     });
   }
 });
+
+// update first name
+router.put('/update/firstName', async (req: Request, res: Response) => {
+  const { firstName } = req.body;
+  const { token } = req.cookies;
+
+  if (!token) {
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
+  }
+
+  jwt.verify(token, secret, {}, async (err, decoded) => {
+    if (err) {
+      console.error('JWT verification error:', err);
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    try {
+      const info = decoded as CustomJwtPayload;
+      const updatedUser = await userModel.findByIdAndUpdate(info.id, { firstName }, { new: true });
+
+      if (!updatedUser) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      }
+      res.json(updatedUser);
+    } catch (error) {
+      console.error('Internal server error:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  })
+});
+
+// update last name
+router.put('/update/lastName', async (req: Request, res: Response) => {});
+
+// update email
+router.put('/update/email', async (req: Request, res: Response) => {});
 
 // logout
 router.post('/logout', async (req: Request, res: Response) => {
