@@ -20,7 +20,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "LinkStash",
+  title: "LinkStasherr",
   description: "A simple link shortener with a focus on privacy. Built with Next.js. Deployed on Vercel.",
 };
 
