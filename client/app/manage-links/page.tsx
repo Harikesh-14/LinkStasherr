@@ -9,7 +9,7 @@ interface CustomLink {
   _id: string;
   url: string;
   modifiedUrl: string;
-  clicks?: number;
+  click: number;
 }
 
 export default function ManageLinks() {
@@ -133,6 +133,7 @@ export default function ManageLinks() {
                 <th className="px-4 py-3 text-left border-b dark:border-gray-700 sticky top-0">S.No</th>
                 <th className="px-4 py-3 text-left border-b dark:border-gray-700 sticky top-0">Original Link</th>
                 <th className="px-4 py-3 text-left border-b dark:border-gray-700 sticky top-0">Modified Link</th>
+                <th className="px-4 py-3 text-left border-b dark:border-gray-700 sticky top-0">Times Opened</th>
                 <th className="px-4 py-3 text-left border-b dark:border-gray-700 sticky top-0">Action</th>
               </tr>
             </thead>
@@ -150,7 +151,8 @@ export default function ManageLinks() {
                   <tr key={link._id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-4 py-2 border-b dark:border-gray-700">{index + 1}</td>
                     <td className="px-4 py-2 border-b dark:border-gray-700">{link.url}</td>
-                    <td className="px-4 py-2 border-b dark:border-gray-700">{link.modifiedUrl}</td>
+                    <td className="px-4 py-2 border-b dark:border-gray-700 text-center">{link.modifiedUrl}</td>
+                    <td className="px-4 py-2 border-b dark:border-gray-700 text-center">{link.click}</td>
                     <td className="px-4 py-2 border-b dark:border-gray-700">
                       <button 
                         onClick={() => handleDeleteLink(link._id)}
