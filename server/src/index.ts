@@ -17,8 +17,8 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: '*', // Allow all origins
-  credentials: true,
+  origin: [process.env.CLIENT_URL as string, "https://linkstasherr-1vhpc3dj0-harikesh-ranjan-sinhas-projects.vercel.app"],
+  credentials: true
 }));
 
 mongoose.connect(process.env.MONGO_URI as string).then(() => {
