@@ -75,7 +75,7 @@ router.post("/login", async (req: Request, res: Response) => {
     };
 
     const token = jwt.sign(tokenPayload, secret, {});
-    res.cookie("token", token, { httpOnly: true, secure: true }).json(tokenPayload);
+    res.cookie("token", token, { httpOnly: true }).json(tokenPayload);
   } catch (err) {
     console.error('Internal server error:', err);
     res.status(500).json({ message: "Internal server error" });
