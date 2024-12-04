@@ -40,11 +40,7 @@ export default function ManageLinks() {
           router.push('/login');
         }
       } catch (error) {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'Failed to check user authentication',
-        });
+        console.error(error);
       }
     };
 
@@ -74,11 +70,7 @@ export default function ManageLinks() {
             });
           }
         } catch (error) {
-          toast({
-            variant: 'destructive',
-            title: 'Error',
-            description: 'Failed to fetch custom links',
-          });
+          console.error(error);
         } finally {
           setIsLoading(false);
         }
@@ -114,11 +106,7 @@ export default function ManageLinks() {
         });
       }
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Failed to delete link',
-      });
+      console.error(error);
     }
   };
 

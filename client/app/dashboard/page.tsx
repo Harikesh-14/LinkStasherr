@@ -37,11 +37,7 @@ export default function Dashboard() {
           router.push('/login');
         }
       } catch (error) {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'Failed to check user authentication',
-        });
+        console.error(error);
       }
     };
 

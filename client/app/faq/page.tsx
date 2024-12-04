@@ -84,7 +84,7 @@ export default function Faq() {
         </div>
         <h2 className="mt-5 text-2xl md:text-3xl font-medium text-[#6D28D9]">Still have questions?</h2>
         <p className="mt-2 text-gray-500">
-          If you have any other questions or feedback, feel free to reach out to us. We're here to help! Mail us at <strong className="text-[#6D28D9] underline">ranjansinhaharikesh@gmail.com</strong> or click on the button below to send us an email.
+          If you have any other questions or feedback, feel free to reach out to us. We&apos;re here to help! Mail us at <strong className="text-[#6D28D9] underline">ranjansinhaharikesh@gmail.com</strong> or click on the button below to send us an email.
         </p>
         <Link
           href="mailto:ranjansinhaharikesh.gmail.com"

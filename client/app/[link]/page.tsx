@@ -54,11 +54,7 @@ export default function DynamicRedirect({
           });
         }
       } catch (error) {
-        return toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'Failed to redirect to the original link',
-        });
+        console.error(error);
       }
     }
 

@@ -30,11 +30,7 @@ const CustomLink = () => {
           router.push('/login');
         }
       } catch (error) {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'Failed to check user authentication',
-        });
+        console.error(error);
       }
     };
 
@@ -83,11 +79,7 @@ const CustomLink = () => {
         });
       }
     } catch (err) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Please enter a valid URL',
-      });
+      console.error(err);
     }
   };
 

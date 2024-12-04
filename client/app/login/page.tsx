@@ -132,7 +132,7 @@ export default function Login() {
         <hr className="mt-5" />
 
         <div>
-          <p className="mt-5 text-center text-sm font-medium text-gray-900 dark:text-gray-300">Don't have an account? <Link href="/register" className="text-[#6D28D9] dark:text-[#6D28D9]">Sign Up</Link></p>
+          <p className="mt-5 text-center text-sm font-medium text-gray-900 dark:text-gray-300">Don&apos;t have an account? <Link href="/register" className="text-[#6D28D9] dark:text-[#6D28D9]">Sign Up</Link></p>
         </div>
       </form>
     </div>
