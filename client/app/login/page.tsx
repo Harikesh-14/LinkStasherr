@@ -22,6 +22,7 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+  
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/login`, {
         method: "POST",
@@ -31,47 +32,23 @@ export default function Login() {
         body: JSON.stringify(formData),
         credentials: "include",
       });
-
-      const contentType = response.headers.get("content-type");
-      if (!response.ok) {
-        if (contentType && contentType.includes("application/json")) {
-          const errorData = await response.json();
-          if (errorData.message === "User not found") {
-            return toast({
-              variant: "destructive",
-              title: "Error",
-              description: errorData.message,
-            });
-          } else if (errorData.message === "Invalid credentials") {
-            return toast({
-              variant: "destructive",
-              title: "Error",
-              description: errorData.message,
-            });
-          } else {
-            return toast({
-              variant: "destructive",
-              title: "Error",
-              description: "An unexpected error occurred",
-            });
-          }
-        } else {
-          const errorText = await response.text();
-          return toast({
-            variant: "destructive",
-            title: "Error",
-            description: errorText,
-          });
-        }
+  
+      if (response.ok) {
+        window.location.href = "/"; // Redirect on success
       } else {
-        // router.push("/");
-        window.location.href = "/";
+        const errorData = await response.json();
+        const errorMessage = errorData?.message || "An unexpected error occurred";
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: errorMessage,
+        });
       }
     } catch (error) {
       console.error("Client-side error:", error);
       alert("An error occurred. Please try again later.");
     }
-  };
+  };  
 
   return (
     <div className="w-[25rem] md:w-[30rem] mx-auto flex flex-col items-center justify-center mt-32 mb-10 space-y-5 dark:text-white border border-gray-200 dark:border-gray-700 p-5 rounded-lg">
